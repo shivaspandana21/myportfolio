@@ -41,7 +41,7 @@ export default function About() {
                 boxShadow: "0 8px 32px rgba(91,155,181,0.15)",
               }}>
                 <img
-                  src="/portfolio_pic.jpeg"
+                  src={process.env.PUBLIC_URL + "/portfolio_pic.jpeg"}
                   alt="Shiva Spandana"
                   style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
                 />
