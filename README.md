@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Shiva Spandana — Portfolio Website
 
 Premium responsive portfolio in Ice Blue + Beige + Brown theme.
@@ -30,3 +31,6 @@ npm run build
 - Resume link: About.jsx → href on Download Resume button
 - Social links: Hero.jsx and About.jsx
 - Update projects, certs, etc. in respective component files
+=======
+# myportfolio
+>>>>>>> 915ec65fd89f3b7a912736ff7fa86523231230e2
