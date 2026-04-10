@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "../hooks/useInView";
 import { FiSend } from "react-icons/fi";
+import emailjs from "@emailjs/browser";
+
+const EMAILJS_SERVICE_ID  = "service_47jeoxp";
+const EMAILJS_TEMPLATE_ID = "template_t1ig9cp";
+const EMAILJS_PUBLIC_KEY  = "fW-irSlKBXUSWKDmT";
 
 const contactInfo = [
   { emoji: "📧", label: "Email", value: "avulashivaspandana1320@gmail.com", href: "mailto:avulashivaspandana1320@gmail.com" },
   { emoji: "💼", label: "LinkedIn", value: "shivaspandana-avula", href: "https://www.linkedin.com/in/shivaspandana-avula-141129346" },
   { emoji: "💻", label: "GitHub", value: "shivaspandana21", href: "https://github.com/shivaspandana21" },
   { emoji: "🧩", label: "LeetCode", value: "Spandana_21", href: "https://leetcode.com/u/Spandana_21/" },
-  { emoji: "📱", label: "Phone", value: "+91-8374212306", href: "tel:+918374212306" },
   { emoji: "📍", label: "Location", value: "Warangal, India", href: null },
 ];
 
@@ -16,12 +20,33 @@ export default function Contact() {
   const [ref, inView] = useInView(0.1);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 3500);
-    setForm({ name: "", email: "", message: "" });
+    setLoading(true);
+    setError("");
+
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: form.name,
+          from_email: form.email,
+          message: form.message,
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+      setSent(true);
+      setForm({ name: "", email: "", message: "" });
+      setTimeout(() => setSent(false), 3500);
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputStyle = {
@@ -101,9 +126,12 @@ export default function Contact() {
                   <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#3d2b1f", marginBottom: 6 }}>Message</label>
                   <textarea required rows={4} value={form.message} onChange={e => setForm({...form, message: e.target.value})} placeholder="Hi Shiva, I'd love to connect about..." style={{ ...inputStyle, resize: "none" }} />
                 </div>
-                <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "linear-gradient(135deg, #5b9bb5, #7ab8ce)", color: "#fff", fontWeight: 600, fontSize: 14, padding: "13px", borderRadius: 12, border: "none", cursor: "pointer" }}>
-                  <FiSend size={15} /> Send Message
+                {error && (
+                  <p style={{ color: "#c0392b", fontSize: 12, marginTop: -6 }}>{error}</p>
+                )}
+                <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} disabled={loading}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: loading ? "#a0c4d8" : "linear-gradient(135deg, #5b9bb5, #7ab8ce)", color: "#fff", fontWeight: 600, fontSize: 14, padding: "13px", borderRadius: 12, border: "none", cursor: loading ? "not-allowed" : "pointer", transition: "background 0.2s" }}>
+                  <FiSend size={15} /> {loading ? "Sending..." : "Send Message"}
                 </motion.button>
               </form>
             )}
